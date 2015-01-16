@@ -1,0 +1,107 @@
+﻿<Window x:Class="ImageTag.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:imageTag="clr-namespace:ImageTag"
+        Title="Image Tagger" 
+        Height="750" 
+        Width="600">
+    <Grid>
+        <Grid Name="MainGrid" Margin="1.5">
+            <Grid.Resources>
+                <imageTag:ImageConverter x:Key="imageConverter"/>
+            </Grid.Resources>
+            
+            <Grid.RowDefinitions>
+                <RowDefinition Height="25"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+            </Grid.RowDefinitions>
+            
+            <StackPanel Orientation="Horizontal" Grid.Row="0">
+                <Button Name="FolderButton" 
+                    Click="FolderButton_OnClick">Browse...</Button>
+                <Button Name="TagAllButton" 
+                    Click="TagAllButton_OnClick"
+                    ToolTip="Tag all images based on folder name">Tag all...</Button>
+                <Button Name="AddTagButton"
+                        Click="AddTagButton_OnClick"
+                        ToolTip="Add a tag to all selected images">Add Tag...</Button>
+                <Button Name="ChgTagButton"
+                        Click="ChgTagButton_OnClickTagButton_OnClick"
+                        ToolTip="Change a tag">Edit Tag...</Button>
+                <Button Name="DelTagButton"
+                        Click="DelTagButton_OnClick"
+                        ToolTip="Remove a tag from all selected images">Remove Tag...</Button>
+                <Button Name="KillTagButton"
+                        Click="KillTagButton_OnClick"
+                        ToolTip="Delete the selected tag(s), and remove from all images">Kill Tag...</Button>
+            </StackPanel>
+
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="150"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                
+                <ListBox Name="TagList" Grid.Column="0"
+                         SelectionMode="Extended"
+                         ItemsSource="{Binding MainTagList}"
+                         SelectionChanged="TagList_OnSelectionChanged"
+                    >
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="{x:Type ListBoxItem}">
+                            <Style.Resources>
+                                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="LightGreen" />
+                                <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="LightGreen" />
+                                <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="Red"/>
+                            </Style.Resources>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+
+                </ListBox>
+                
+                <ListBox Name="ImageList" Grid.Column="1"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                         SelectionMode="Extended"
+                         SelectionChanged="ImageList_OnSelectionChanged"
+                         ItemsSource="{Binding MainImageList}"
+                 >
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel />
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="{x:Type ListBoxItem}">
+                            <Style.Triggers>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter Property="Background" Value="LightPink" />
+                                </Trigger>
+                            </Style.Triggers>
+                            <Setter Property="IsSelected" Value="{Binding Path=IsSelected, Mode=TwoWay}"/>
+                            <Style.Resources>
+                                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="LightGreen" />
+                                <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="LightGreen" />
+                                <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="Red"/>
+                            </Style.Resources>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Margin="1">
+                                <Border Width="150" Height="150" BorderThickness="2" BorderBrush="#52524B">
+                                    <Grid ToolTip="{Binding Path=Dimensions}" ToolTipService.ShowDuration="7500">
+                                        <Image Source="{Binding Path=PreviewURL, Converter={StaticResource imageConverter}}" 
+                                               Stretch="Uniform" 
+                                               SnapsToDevicePixels="True" 
+                                               RenderOptions.BitmapScalingMode="LowQuality"/>
+                                    </Grid>
+                                </Border>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+
+                </ListBox>
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>
