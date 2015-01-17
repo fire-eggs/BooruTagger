@@ -2,6 +2,8 @@
 using System.Windows;
 using System.Windows.Controls;
 
+// TODO filter for illegal path/file characters at combobox level
+
 namespace ImageTag
 {
     /// <summary>
@@ -14,7 +16,7 @@ namespace ImageTag
             InitializeComponent();
             taglist.ItemsSource = tags;
             btnDlgOK.IsEnabled = true; // TODO find "on text changed" event for editable combo
-            OldTag.Content = string.Format("Changing tag '{0}'", oldTag);
+            OldTag.Text = string.Format("Changing tag '{0}'", oldTag);
         }
 
         private void Taglist_OnSelectionChanged(object sender, SelectionChangedEventArgs e)

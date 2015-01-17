@@ -8,7 +8,7 @@
     >
     <Grid Margin="15">
         <StackPanel Orientation="Vertical">
-            <Label Name="OldTag"
+            <TextBlock Name="OldTag"
                    />
             <StackPanel Orientation="Horizontal" >
                 <Label>Select or Enter Tag to use:</Label>
