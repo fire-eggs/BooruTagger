@@ -21,7 +21,12 @@ namespace ImageTag
 
             try
             {
-                return new BitmapImage(new Uri(value as string));
+                var bi = new BitmapImage();
+                bi.BeginInit();
+                bi.CacheOption = BitmapCacheOption.OnLoad; // Don't lock the file
+                bi.UriSource = new Uri(value as string, UriKind.Absolute);
+                bi.EndInit();
+                return bi;
             }
             catch
             {
@@ -32,6 +37,7 @@ namespace ImageTag
                     var bi = new BitmapImage();
                     bi.BeginInit();
                     bi.CreateOptions = BitmapCreateOptions.IgnoreColorProfile;
+                    bi.CacheOption = BitmapCacheOption.OnLoad; // Don't lock the file
                     bi.UriSource = new Uri(value as string);
                     bi.EndInit();
                     return bi;
