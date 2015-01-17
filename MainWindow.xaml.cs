@@ -49,6 +49,22 @@ namespace ImageTag
             }
             #endregion
         }
+
+        private static bool IsImageFile(string path)
+        {
+            var ext = Path.GetExtension(path);
+            switch (ext.ToLower())
+            {
+                case ".jpg":
+                case ".jpeg":
+                case ".bmp":
+                case ".gif":
+                case ".png":
+                    return true;
+            }
+            return false;
+        }
+
         private void FolderButton_OnClick(object sender, RoutedEventArgs e)
         {
             // 1. allow user to browse to a folder
@@ -65,6 +81,9 @@ namespace ImageTag
             var allFiles = Directory.GetFiles(_lastPath);
             foreach (var aFile in allFiles)
             {
+                if (!IsImageFile(aFile))
+                    continue;
+
                 ImageFile anImg = new ImageFile(aFile);
                 MainImageList.Add(anImg);
             }
