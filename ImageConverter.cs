@@ -23,6 +23,7 @@ namespace ImageTag
             {
                 var bi = new BitmapImage();
                 bi.BeginInit();
+                bi.DecodePixelWidth = 200;
                 bi.CacheOption = BitmapCacheOption.OnLoad; // Don't lock the file
                 bi.UriSource = new Uri(value as string, UriKind.Absolute);
                 bi.EndInit();
@@ -36,6 +37,7 @@ namespace ImageTag
                     // See: http://www.hanselman.com/blog/DealingWithImagesWithBadMetadataCorruptedColorProfilesInWPF.aspx
                     var bi = new BitmapImage();
                     bi.BeginInit();
+                    bi.DecodePixelWidth = 200;
                     bi.CreateOptions = BitmapCreateOptions.IgnoreColorProfile;
                     bi.CacheOption = BitmapCacheOption.OnLoad; // Don't lock the file
                     bi.UriSource = new Uri(value as string);
