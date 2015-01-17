@@ -1,20 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using System.Windows.Forms;
+using MessageBox = System.Windows.MessageBox;
 
 namespace ImageTag
 {
@@ -34,15 +26,43 @@ namespace ImageTag
             InitializeComponent();
         }
 
+        private string _lastPath = null;
+        public static IWin32Window GetIWin32Window(System.Windows.Media.Visual visual)
+        {
+            var source = PresentationSource.FromVisual(visual) as System.Windows.Interop.HwndSource;
+            IWin32Window win = new OldWindow(source.Handle);
+            return win;
+        }
+
+        private class OldWindow : IWin32Window
+        {
+            private readonly IntPtr _handle;
+            public OldWindow(IntPtr handle)
+            {
+                _handle = handle;
+            }
+
+            #region IWin32Window Members
+            IntPtr IWin32Window.Handle
+            {
+                get { return _handle; }
+            }
+            #endregion
+        }
         private void FolderButton_OnClick(object sender, RoutedEventArgs e)
         {
             // 1. allow user to browse to a folder
-            string mainPath = @"E:\temp\danbooru test\very wide folder name";
+            var dlg = new FolderBrowserDialog();
+            if (_lastPath != null)
+                dlg.SelectedPath = _lastPath;
+            if (dlg.ShowDialog(GetIWin32Window(this)) != System.Windows.Forms.DialogResult.OK)
+                return;
+            _lastPath = dlg.SelectedPath;
 
             MainImageList.Clear();
 
             // 2. For each image in folder, add to MainImageList
-            var allFiles = Directory.GetFiles(mainPath);
+            var allFiles = Directory.GetFiles(_lastPath);
             foreach (var aFile in allFiles)
             {
                 ImageFile anImg = new ImageFile(aFile);
