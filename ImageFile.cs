@@ -67,7 +67,8 @@ namespace ImageTag
 
             var tagList = new List<string>();
             for (int i = 1; i < bits.Length; i++)
-                tagList.Add(bits[i]);
+                if (!tagList.Contains(bits[i]))
+                    tagList.Add(bits[i]);
             return tagList;
         }
 
