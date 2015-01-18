@@ -91,7 +91,7 @@
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Margin="1">
-                                <Border Width="150" Height="150" BorderThickness="2" BorderBrush="#52524B">
+                                <Border Width="200" Height="200" BorderThickness="3" BorderBrush="#52524B"> <!-- TODO use the selected brush? -->
                                     <Grid ToolTip="{Binding Path=Dimensions}" ToolTipService.ShowDuration="7500">
                                         <Image Source="{Binding Path=PreviewURL, Converter={StaticResource imageConverter}}" 
                                                Stretch="Uniform" 
