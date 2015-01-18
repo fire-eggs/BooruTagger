@@ -15,6 +15,8 @@ namespace ImageTag
     /// </summary>
     public partial class MainWindow : Window
     {
+        private string RESET_FILTER = "<show all>";
+
         public ObservableCollection<ImageFile> MainImageList { get; set; }
         public ObservableCollection<String> MainTagList { get; set; }
         public MainWindow()
@@ -110,6 +112,8 @@ namespace ImageTag
         {
             MainTagList.Clear();
             var tags = MergedTagList(new List<ImageFile>(MainImageList));
+
+            MainTagList.Add(RESET_FILTER); // make sure this is first
             foreach (var aTag in tags)
             {
                 MainTagList.Add(aTag);
@@ -151,26 +155,40 @@ namespace ImageTag
 
             _preventRecursion = true;
 
-            foreach (var imageFile in MainImageList)
-            {
-                imageFile.IsSelected = false;
-            }
-
-            var tags = TagList.SelectedItems;
-//            ImageList.SelectedItems.Clear();
-            foreach (var tag in tags)
+            try
             {
                 foreach (var imageFile in MainImageList)
                 {
-                    if (imageFile.HasTag(tag as string))
+                    imageFile.IsSelected = false;
+                    imageFile.IsVisible = true;
+                }
+
+                var tags = TagList.SelectedItems;
+//            ImageList.SelectedItems.Clear();
+                foreach (string tag in tags)
+                {
+                    if (tag == RESET_FILTER)
+                        return;
+
+                    foreach (var imageFile in MainImageList)
                     {
-                        imageFile.IsSelected = true;
+                        if (imageFile.HasTag(tag))
+                        {
+                            imageFile.IsSelected = true;
 //                        ImageList.SelectedItems.Add(imageFile);
+                        }
+                        else
+                        {
+                            imageFile.IsVisible = false;
+                                // Hide images which don't have the selected tag
+                        }
                     }
                 }
             }
-
-            _preventRecursion = false;
+            finally
+            {
+                _preventRecursion = false;
+            }
         }
 
         private void AddTagButton_OnClick(object sender, RoutedEventArgs e)

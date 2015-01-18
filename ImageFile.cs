@@ -1,12 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Windows;
 
 // Represents a single image
 
-// TODO tag character as an option
-// TODO previewURL -> a preview thumbnail image. Need to store original path separately.
+// TODO tag/separator character as an option
 
 namespace ImageTag
 {
@@ -14,6 +12,7 @@ namespace ImageTag
     {
         private string _previewURL;
         private bool _isSelected = false;
+        private bool _isVisible = true; // may be filtered by the GUI
         private string _dimensions;
         private List<string> _tagList;
 
@@ -47,6 +46,17 @@ namespace ImageTag
                 RaisePropertyChanged("IsSelected");
             }
         }
+
+        public bool IsVisible
+        {
+            get { return _isVisible; }
+            set
+            {
+                _isVisible = value; 
+                OnPropertyChanged(() => IsVisible);
+            }
+        }
+
         public string Dimensions
         {
             get { return _dimensions; }

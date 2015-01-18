@@ -76,6 +76,9 @@
                                 <Trigger Property="IsSelected" Value="True">
                                     <Setter Property="Background" Value="LightPink" />
                                 </Trigger>
+                                <DataTrigger Binding="{Binding IsVisible}" Value="False">
+                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                </DataTrigger>
                             </Style.Triggers>
                             <Setter Property="IsSelected" Value="{Binding Path=IsSelected, Mode=TwoWay}"/>
                             <Style.Resources>
