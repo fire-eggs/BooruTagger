@@ -22,9 +22,9 @@
                         Click="BtnDlgOK_OnClick" 
                         Content="_Ok"
                         MinWidth="60"
+                        IsDefault="True" 
                         />
                 <Button IsCancel="True" 
-                        IsDefault="True" 
                         Content="_Cancel"
                         MinWidth="60"
                         />
