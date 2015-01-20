@@ -164,7 +164,15 @@ namespace ImageTag
 
             // TODO check if dest length > 256
 
-            File.Move(_previewURL, dest);
+            try
+            {
+                File.Move(_previewURL, dest);
+            }
+            catch
+            {
+                // Image probably removed by another program
+                // TODO remove from files/tags
+            }
             _previewURL = dest;
             MakeDims();
         }
