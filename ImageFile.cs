@@ -1,10 +1,12 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 
 // Represents a single image
 
 // TODO tag/separator character as an option
+using System.Text;
 
 namespace ImageTag
 {
@@ -21,8 +23,8 @@ namespace ImageTag
         public ImageFile(string filePath)
         {
             PreviewURL = filePath;
-            Dimensions = "<TBD>";
             _tagList = MakeTags();
+            MakeDims();
         }
 
         public string PreviewURL 
@@ -65,6 +67,19 @@ namespace ImageTag
                 _dimensions = value;
                 RaisePropertyChanged("Dimensions");
             }
+        }
+
+        private void MakeDims()
+        {
+            StringBuilder sb = new StringBuilder(); 
+            sb.Append(_baseFile);
+            sb.AppendLine();
+            foreach (var aTag in _tagList)
+            {
+                sb.Append(" " + aTag);
+            }
+            sb.AppendLine();
+            Dimensions = sb.ToString();
         }
 
         private static char[] tagSplit = { '+' };
@@ -151,6 +166,7 @@ namespace ImageTag
 
             File.Move(_previewURL, dest);
             _previewURL = dest;
+            MakeDims();
         }
 
     }
