@@ -26,6 +26,7 @@ Some obvious limitations:
 - Spelling errors, inconsistent tags, etc.
 
 So this program is intended to help deal with these limits/issues:
+
 1. Select a folder: view thumbnails and all tags for all images in the folder.
 2. Be able to delete all, or some, instances of a tag.
 3. Be able to edit a tag and have that apply to all images.
