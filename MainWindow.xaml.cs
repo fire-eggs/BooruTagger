@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
+using System.Windows.Threading;
 using MessageBox = System.Windows.MessageBox;
 
 namespace ImageTag
@@ -80,17 +83,20 @@ namespace ImageTag
             MainImageList.Clear();
 
             // 2. For each image in folder, add to MainImageList
+            _imagesToFetch.Clear();
             var allFiles = Directory.GetFiles(_lastPath);
             foreach (var aFile in allFiles)
             {
                 if (!IsImageFile(aFile))
                     continue;
+                _imagesToFetch.Add(aFile);
 
-                ImageFile anImg = new ImageFile(aFile);
-                MainImageList.Add(anImg);
+                //ImageFile anImg = new ImageFile(aFile);
+                //MainImageList.Add(anImg);
             }
 
-            BuildTags();
+            FetchImages();
+//            BuildTags();
         }
 
         private IEnumerable<string> MergedTagList(IEnumerable<ImageFile> images)
@@ -122,7 +128,6 @@ namespace ImageTag
 
         private void TagAllButton_OnClick(object sender, RoutedEventArgs e)
         {
-            throw new NotImplementedException();
         }
 
         private bool _preventRecursion = false;
@@ -136,9 +141,9 @@ namespace ImageTag
 
             var images = ImageList.SelectedItems;
             TagList.SelectedItems.Clear();
-            foreach (var image in images)
+            foreach (ImageFile image in images)
             {
-                var tags = (image as ImageFile).Tags();
+                var tags = image.Tags();
                 foreach (var tag in tags)
                 {
                     TagList.SelectedItems.Add(tag);
@@ -280,5 +285,52 @@ namespace ImageTag
 
             BuildTags();
         }
+
+        private BackgroundWorker imageFetcher;
+        private List<string> _imagesToFetch = new List<string>();
+
+        public void FetchImages()
+        {
+            if (imageFetcher == null)
+            {
+                imageFetcher = new BackgroundWorker();
+                imageFetcher.DoWork += ImageFetch;
+                imageFetcher.RunWorkerCompleted += ImageLoadDone;
+            }
+            if (_imagesToFetch.Count > 0)
+                imageFetcher.RunWorkerAsync();
+        }
+
+        private void ImageLoadDone(object sender, RunWorkerCompletedEventArgs e)
+        {
+            _imagesToFetch.Clear();
+            BuildTags();
+        }
+
+        private delegate void UpdateDelegate(ImageFile anImg);
+
+        private void ImageFetch(object sender, DoWorkEventArgs e)
+        {
+            UpdateDelegate update = UpdateMainList;
+
+            foreach (var aFile in _imagesToFetch)
+            {
+                ImageFile anImg = new ImageFile(aFile);
+                this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, update, anImg);
+                Thread.Sleep(10); // Nothing happens unless we explicitly let the GUI do stuff. NOTE: 'yield()' doesn't work.
+            }
+        }
+
+        private void UpdateMainList(ImageFile anImg)
+        {
+            MainImageList.Add(anImg);
+            //ImageList.Items.Refresh();
+            //anImg.RaisePropertyChanged("PreviewURL");
+            //anImg.RaisePropertyChanged("IsVisible");
+        }
+
+        // http://elegantcode.com/2009/07/03/wpf-multithreading-using-the-backgroundworker-and-reporting-the-progress-to-the-ui/
+        // http://pooyakhamooshi.blogspot.com/2010/07/accessing-ui-elements-using-dispatcher.html
+
     }
 }
