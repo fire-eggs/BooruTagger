@@ -17,6 +17,7 @@ namespace ImageTag
             taglist.ItemsSource = tags;
             btnDlgOK.IsEnabled = true; // TODO find "on text changed" event for editable combo
             OldTag.Text = string.Format("Changing tag '{0}'", oldTag);
+            taglist.SelectedItem = oldTag;
         }
 
         private void Taglist_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
