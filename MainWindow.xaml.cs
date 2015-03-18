@@ -80,7 +80,11 @@ namespace ImageTag
                 return;
             _lastPath = dlg.SelectedPath;
 
+            // TODO Something stupid is happening, not releasing references?
+            ImageList.ItemsSource = null;
             MainImageList.Clear();
+            GC.Collect();
+            ImageList.ItemsSource = MainImageList;
 
             // 2. For each image in folder, add to MainImageList
             _imagesToFetch.Clear();
@@ -283,6 +287,18 @@ namespace ImageTag
                 (image as ImageFile).ChangeTag(oldTag, dlg.Answer);
             }
 
+            BuildTags();
+        }
+
+        private void MngTagButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (ImageList.SelectedItems.Count < 1 || ImageList.SelectedItems.Count > 1)
+                return;
+            var img = ImageList.SelectedItem as ImageFile;
+
+            var dlg = new ManageTagDlg(img) {Owner = this};
+            if (dlg.ShowDialog() == false)
+                return;
             BuildTags();
         }
 

@@ -34,6 +34,9 @@
                 <Button Name="KillTagButton"
                         Click="KillTagButton_OnClick"
                         ToolTip="Delete the selected tag(s), and remove from all images">Kill Tag...</Button>
+                <Button Name="MngTagButton"
+                        Click="MngTagButton_OnClick"
+                        ToolTip="">Manage Tags...</Button>
             </StackPanel>
 
             <Grid Grid.Row="1">

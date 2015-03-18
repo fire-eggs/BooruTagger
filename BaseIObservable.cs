@@ -11,7 +11,7 @@ namespace ImageTag
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected void RaisePropertyChanged(string property)
+        public void RaisePropertyChanged(string property)
         {
             if (PropertyChanged != null)
             {

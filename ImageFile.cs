@@ -36,6 +36,9 @@ namespace ImageTag
                 RaisePropertyChanged("PreviewURL");
             }
         }
+
+        public string BaseName { get { return _baseFile; } }
+
         public bool IsSelected
         {
             get
