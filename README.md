@@ -1,11 +1,14 @@
 # BooruTagger
-A quick-and-dirty WPF app to assist in tagging images downloaded from boorus
 
-A very simple WPF app to show image thumbnails and 'tags'.
+A very simple WPF app to show image thumbnails and 'tags'. I use it to assist in 'tagging' images downloaded from boorus.
 
 This is _not_ fancy: no MVVM, MVC or any of that jazz. Kludgy dialogs, etc. _Not_ a "good" example of how to program WPF. Heck, not a good example of how to develop a GUI!
 
 These facts may change over time.
+
+Program
+-------
+Added a pre-build executable in its own folder. You'll need .NET 4.5 installed to run it.
 
 Tags
 ----
@@ -21,7 +24,7 @@ is an image downloaded from Danbooru.
 Tags are either as come from a booru or as added by myself. 
 
 Some obvious limitations:
-- Windows has a 256 character limit, including the folders. Not many tags.
+- Windows has a 256 character limit, including the full path to the image. Not many tags.
 - There are a lot of tags from the booru, many of which I don't care about.
 - Spelling errors, inconsistent tags, etc.
 
@@ -31,4 +34,4 @@ So this program is intended to help deal with these limits/issues:
 2. Be able to delete all, or some, instances of a tag.
 3. Be able to edit a tag and have that apply to all images.
 4. Be able to add a new/existing tag to one or more images.
-5. Be smart enough to manage the 256 character limit, possibly by dropping "low priority" tags.
+5. Be smart enough to manage the 256 character limit, TBD: possibly by dropping "low priority" tags.
