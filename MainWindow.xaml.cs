@@ -16,9 +16,9 @@ namespace ImageTag
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow
     {
-        private string RESET_FILTER = "<show all>";
+        private const string RESET_FILTER = "<show all>";
 
         public ObservableCollection<ImageFile> MainImageList { get; set; }
         public ObservableCollection<String> MainTagList { get; set; }
@@ -31,10 +31,12 @@ namespace ImageTag
             InitializeComponent();
         }
 
-        private string _lastPath = null;
+        private string _lastPath;
         public static IWin32Window GetIWin32Window(System.Windows.Media.Visual visual)
         {
             var source = PresentationSource.FromVisual(visual) as System.Windows.Interop.HwndSource;
+            if (source == null)
+                return null;
             IWin32Window win = new OldWindow(source.Handle);
             return win;
         }
@@ -58,6 +60,8 @@ namespace ImageTag
         private static bool IsImageFile(string path)
         {
             var ext = Path.GetExtension(path);
+            if (ext == null)
+                return false;
             switch (ext.ToLower())
             {
                 case ".jpg":
@@ -94,13 +98,9 @@ namespace ImageTag
                 if (!IsImageFile(aFile))
                     continue;
                 _imagesToFetch.Add(aFile);
-
-                //ImageFile anImg = new ImageFile(aFile);
-                //MainImageList.Add(anImg);
             }
 
             FetchImages();
-//            BuildTags();
         }
 
         private IEnumerable<string> MergedTagList(IEnumerable<ImageFile> images)
@@ -120,6 +120,8 @@ namespace ImageTag
 
         private void BuildTags()
         {
+            TagList.SelectionChanged -= TagList_OnSelectionChanged;
+
             MainTagList.Clear();
             var tags = MergedTagList(new List<ImageFile>(MainImageList));
 
@@ -128,81 +130,62 @@ namespace ImageTag
             {
                 MainTagList.Add(aTag);
             }
+
+            TagList.SelectionChanged += TagList_OnSelectionChanged;
+            TagList.SelectedIndex = 0;
         }
 
         private void TagAllButton_OnClick(object sender, RoutedEventArgs e)
         {
         }
 
-        private bool _preventRecursion = false;
-
+        // Show which tags apply when one or more images are selected in the image list.
         private void ImageList_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (_preventRecursion)
-                return;
-
-            _preventRecursion = true;
-
-            var images = ImageList.SelectedItems;
-            TagList.SelectedItems.Clear();
-            foreach (ImageFile image in images)
-            {
-                var tags = image.Tags();
-                foreach (var tag in tags)
-                {
-                    TagList.SelectedItems.Add(tag);
-                }
-            }
-
-            _preventRecursion = false;
-        }
-
-        private void TagList_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (_preventRecursion)
-                return;
-
-            _preventRecursion = true;
+            // Don't want selection events from the taglist: we're setting the selection
+            TagList.SelectionChanged -= TagList_OnSelectionChanged;
 
             try
             {
-                foreach (var imageFile in MainImageList)
-                {
-                    imageFile.IsSelected = false;
-                    imageFile.IsVisible = true;
-                }
+                var images = ImageList.SelectedItems;
 
-                var tags = TagList.SelectedItems;
-//            ImageList.SelectedItems.Clear();
-                foreach (string tag in tags)
+                TagList.SelectedItems.Clear();
+                foreach (ImageFile image in images)
                 {
-                    if (tag == RESET_FILTER)
-                        return;
-
-                    foreach (var imageFile in MainImageList)
+                    var tags = image.Tags();
+                    foreach (var tag in tags)
                     {
-                        if (imageFile.HasTag(tag))
-                        {
-                            imageFile.IsSelected = true;
-//                        ImageList.SelectedItems.Add(imageFile);
-                        }
-                        else
-                        {
-                            imageFile.IsVisible = false;
-                                // Hide images which don't have the selected tag
-                        }
+                        TagList.SelectedItems.Add(tag);
                     }
                 }
             }
             finally
             {
-                _preventRecursion = false;
+                // Make sure to restore taglist selection handling
+                TagList.SelectionChanged += TagList_OnSelectionChanged;
+            }
+        }
+
+        // Filters the image list to show only the images with the selected tag(s)
+        private void TagList_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ImageList.SelectedItems.Clear();
+
+            var tags = TagList.SelectedItems;
+            foreach (string tag in tags)
+            {
+                foreach (var imageFile in MainImageList)
+                {
+                    // "<show all>" being special
+                    imageFile.IsVisible = imageFile.HasTag(tag) || tag == RESET_FILTER;
+                }
             }
         }
 
         private void AddTagButton_OnClick(object sender, RoutedEventArgs e)
         {
             // TODO: disable if no images selected
+            // TODO don't include the "show all" tag
 
             // 1. build a list of all current tags
             // 2. show a dialog where the user can either:
@@ -224,6 +207,7 @@ namespace ImageTag
         private void KillTagButton_OnClick(object sender, RoutedEventArgs e)
         {
             // TODO: disable if no tags selected
+            // TODO don't include the "show all" tag
 
             // 1. Prompt the user confirming kill of selected tag(s)
             string selTags = TagList.SelectedItems.Cast<object>().Aggregate("", (current, tag) => current + (tag + ","));
@@ -261,7 +245,7 @@ namespace ImageTag
             // 3. for each selected image, remove tag
             foreach (var image in selImages)
             {
-                image.RemoveTags(new List<string>(){dlg.Answer});
+                image.RemoveTags(new List<string> {dlg.Answer});
             }
 
             BuildTags();
@@ -270,6 +254,7 @@ namespace ImageTag
         private void ChgTagButton_OnClickTagButton_OnClick(object sender, RoutedEventArgs e)
         {
             // TODO disable if no, or more than one, tag selected
+            // TODO don't allow if the "show all" tag selected
 
             if (TagList.SelectedItems.Count < 1 || TagList.SelectedItems.Count > 1)
                 return;
@@ -282,9 +267,9 @@ namespace ImageTag
             if (dlg.ShowDialog() == false)
                 return;
 
-            foreach (var image in ImageList.SelectedItems)
+            foreach (var image in MainImageList) //ImageList.SelectedItems)
             {
-                (image as ImageFile).ChangeTag(oldTag, dlg.Answer);
+                image.ChangeTag(oldTag, dlg.Answer);
             }
 
             BuildTags();
@@ -302,19 +287,19 @@ namespace ImageTag
             BuildTags();
         }
 
-        private BackgroundWorker imageFetcher;
+        private BackgroundWorker _imageFetcher;
         private List<string> _imagesToFetch = new List<string>();
 
         public void FetchImages()
         {
-            if (imageFetcher == null)
+            if (_imageFetcher == null)
             {
-                imageFetcher = new BackgroundWorker();
-                imageFetcher.DoWork += ImageFetch;
-                imageFetcher.RunWorkerCompleted += ImageLoadDone;
+                _imageFetcher = new BackgroundWorker();
+                _imageFetcher.DoWork += ImageFetch;
+                _imageFetcher.RunWorkerCompleted += ImageLoadDone;
             }
             if (_imagesToFetch.Count > 0)
-                imageFetcher.RunWorkerAsync();
+                _imageFetcher.RunWorkerAsync();
         }
 
         private void ImageLoadDone(object sender, RunWorkerCompletedEventArgs e)
@@ -332,17 +317,14 @@ namespace ImageTag
             foreach (var aFile in _imagesToFetch)
             {
                 ImageFile anImg = new ImageFile(aFile);
-                this.Dispatcher.BeginInvoke(DispatcherPriority.Normal, update, anImg);
-                Thread.Sleep(10); // Nothing happens unless we explicitly let the GUI do stuff. NOTE: 'yield()' doesn't work.
+                Dispatcher.BeginInvoke(DispatcherPriority.Normal, update, anImg);
+                Thread.Sleep(15); // Nothing happens unless we explicitly let the GUI do stuff. NOTE: 'yield()' doesn't work.
             }
         }
 
         private void UpdateMainList(ImageFile anImg)
         {
             MainImageList.Add(anImg);
-            //ImageList.Items.Refresh();
-            //anImg.RaisePropertyChanged("PreviewURL");
-            //anImg.RaisePropertyChanged("IsVisible");
         }
 
         // http://elegantcode.com/2009/07/03/wpf-multithreading-using-the-backgroundworker-and-reporting-the-progress-to-the-ui/

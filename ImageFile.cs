@@ -122,31 +122,28 @@ namespace ImageTag
                 RenameFile();
         }
 
+        // Add tag 'A' to a file if it doesn't already exist.
         public void AddTag(string tag)
         {
-            if (!_tagList.Contains(tag))
-            {
-                _tagList.Add(tag);
-                RenameFile();
-            }
+            if (_tagList.Contains(tag))
+                return;
+            _tagList.Add(tag);
+            RenameFile();
         }
 
+        // Replace tag 'A' with 'B'. Do nothing if the file doesn't have tag 'A'.
         public void ChangeTag(string oldtag, string newtag)
         {
-            bool anyChange = false;
-            if (_tagList.Contains(oldtag))
-            {
-                _tagList.Remove(oldtag);
-                anyChange = true;
-            }
+            if (!_tagList.Contains(oldtag))
+                return;
+
+            _tagList.Remove(oldtag);
             if (!_tagList.Contains(newtag))
             {
                 _tagList.Add(newtag);
-                anyChange = true;
             }
 
-            if (anyChange)
-                RenameFile();
+            RenameFile();
         }
 
         private void RenameFile()
