@@ -185,14 +185,21 @@ namespace ImageTag
         private void AddTagButton_OnClick(object sender, RoutedEventArgs e)
         {
             // TODO: disable if no images selected
-            // TODO don't include the "show all" tag
+
+            // Don't include the "show all" tag
+            List<string> tagsCanAdd = new List<string>();
+            foreach (string tagName in MainTagList)
+            {
+                if (tagName != RESET_FILTER)
+                    tagsCanAdd.Add(tagName);
+            }
 
             // 1. build a list of all current tags
             // 2. show a dialog where the user can either:
             //  a. select from the current tags
             //  b. type in a new tag
             // 3. Add that tag to all selected images
-            AddTagDlg dlg = new AddTagDlg(MainTagList) {Owner=this};
+            AddTagDlg dlg = new AddTagDlg(tagsCanAdd) {Owner=this};
             if (dlg.ShowDialog() == false)
                 return;
 
@@ -207,10 +214,17 @@ namespace ImageTag
         private void KillTagButton_OnClick(object sender, RoutedEventArgs e)
         {
             // TODO: disable if no tags selected
-            // TODO don't include the "show all" tag
+
+            // Don't include the "show all" tag
+            List<string> tagsCanKill = new List<string>();
+            foreach (string selectedItem in TagList.SelectedItems)
+            {
+                if (selectedItem != RESET_FILTER)
+                    tagsCanKill.Add(selectedItem);
+            }
 
             // 1. Prompt the user confirming kill of selected tag(s)
-            string selTags = TagList.SelectedItems.Cast<object>().Aggregate("", (current, tag) => current + (tag + ","));
+            string selTags = tagsCanKill.Cast<object>().Aggregate("", (current, tag) => current + (tag + ","));
             var msg = string.Format("Are you sure you want to kill the tag(s):{0}{1}", Environment.NewLine, selTags);
             var res = MessageBox.Show(msg, "Kill Tags", MessageBoxButton.YesNo);
             if (res == MessageBoxResult.No)
@@ -254,12 +268,14 @@ namespace ImageTag
         private void ChgTagButton_OnClickTagButton_OnClick(object sender, RoutedEventArgs e)
         {
             // TODO disable if no, or more than one, tag selected
-            // TODO don't allow if the "show all" tag selected
 
             if (TagList.SelectedItems.Count < 1 || TagList.SelectedItems.Count > 1)
                 return;
 
             var oldTag = TagList.SelectedItem as string;
+            // Don't allow if the "show all" tag selected
+            if (oldTag == RESET_FILTER)
+                return;
 
             // 1. Show dialog so user can edit tag
             // 2. For each image, change (old-tag) to (new-tag)
