@@ -17,11 +17,14 @@
             </Grid.RowDefinitions>
             
             <StackPanel Orientation="Horizontal" Grid.Row="0">
+                <StackPanel.Resources>
+                    <Style TargetType="{x:Type Button}">
+                        <Setter Property="Margin" Value="10,2,0,2"/>
+                        <Setter Property="Padding" Value="2,0,2,0"/>
+                    </Style>
+                </StackPanel.Resources>
                 <Button Name="FolderButton" 
                     Click="FolderButton_OnClick">Browse...</Button>
-                <Button Name="TagAllButton" 
-                    Click="TagAllButton_OnClick"
-                    ToolTip="Tag all images based on folder name">Tag all...</Button>
                 <Button Name="AddTagButton"
                         Click="AddTagButton_OnClick"
                         ToolTip="Add a tag to all selected images">Add Tag...</Button>

@@ -11,6 +11,10 @@ using System.Windows.Forms;
 using System.Windows.Threading;
 using MessageBox = System.Windows.MessageBox;
 
+// TODO a splitter so the tag list can be wider would be good
+// TODO add an image viewer on double-click: can't see details in thumbs
+// TODO add and edit tag might attempt to add illegal file characters
+
 namespace ImageTag
 {
     /// <summary>
@@ -135,10 +139,6 @@ namespace ImageTag
             TagList.SelectedIndex = 0;
         }
 
-        private void TagAllButton_OnClick(object sender, RoutedEventArgs e)
-        {
-        }
-
         // Show which tags apply when one or more images are selected in the image list.
         private void ImageList_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -190,6 +190,9 @@ namespace ImageTag
         {
             // TODO: disable if no images selected
 
+            if (ImageList.SelectedItems.Count < 1)
+                return;
+
             // Don't include the "show all" tag
             List<string> tagsCanAdd = new List<string>();
             foreach (string tagName in MainTagList)
@@ -228,6 +231,8 @@ namespace ImageTag
                 if (selectedItem != RESET_FILTER)
                     tagsCanKill.Add(selectedItem);
             }
+            if (tagsCanKill.Count < 1)
+                return;
 
             // 1. Prompt the user confirming kill of selected tag(s)
             string selTags = tagsCanKill.Cast<object>().Aggregate("", (current, tag) => current + (tag + ","));

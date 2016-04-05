@@ -24,7 +24,7 @@ namespace ImageTag
         {
             PreviewURL = filePath;
             _tagList = MakeTags();
-            MakeDims();
+            MakeTooltip();
         }
 
         public string PreviewURL 
@@ -72,7 +72,7 @@ namespace ImageTag
             }
         }
 
-        private void MakeDims()
+        private void MakeTooltip()
         {
             StringBuilder sb = new StringBuilder(); 
             sb.Append(_baseFile);
@@ -81,7 +81,6 @@ namespace ImageTag
             {
                 sb.Append(" " + aTag);
             }
-            sb.AppendLine();
             Dimensions = sb.ToString();
         }
 
@@ -174,7 +173,7 @@ namespace ImageTag
                 // TODO remove from files/tags
             }
             _previewURL = dest;
-            MakeDims();
+            MakeTooltip();
         }
 
     }
