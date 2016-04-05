@@ -209,7 +209,9 @@ namespace ImageTag
 
             foreach (var image in ImageList.SelectedItems)
             {
-                (image as ImageFile).AddTag(dlg.Answer);
+                ImageFile img = image as ImageFile;
+                if (img != null)
+                    img.AddTag(dlg.Answer);
             }
 
             BuildTags();
@@ -229,7 +231,8 @@ namespace ImageTag
 
             // 1. Prompt the user confirming kill of selected tag(s)
             string selTags = tagsCanKill.Cast<object>().Aggregate("", (current, tag) => current + (tag + ","));
-            var msg = string.Format("Are you sure you want to kill the tag(s):{0}{1}", Environment.NewLine, selTags);
+            selTags = selTags.Remove(selTags.LastIndexOf(','));
+            var msg = string.Format("Are you sure you want to kill the tag(s):{0}{1}?", Environment.NewLine, selTags);
             var res = MessageBox.Show(msg, "Kill Tags", MessageBoxButton.YesNo);
             if (res == MessageBoxResult.No)
                 return;

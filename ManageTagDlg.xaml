@@ -10,7 +10,8 @@
         <StackPanel Orientation="Vertical">
             <StackPanel Orientation="Horizontal">
                 <Label Content="Image:" />
-                <TextBox Text="{Binding ImageName}" />
+                <TextBox Text="{Binding ImageName}" 
+                         IsEnabled="False" />
             </StackPanel>
             <ListBox ItemsSource="{Binding TagSet}" >
                 <ListBox.ItemTemplate>
