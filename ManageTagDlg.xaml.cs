@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -75,6 +76,13 @@ namespace ImageTag
             DialogResult = true;
         }
 
-        // TODO get results? Have OK handling update image?
+        public IList Answer
+        {
+            get
+            {
+                return (from checkedListItem in TagSet where !checkedListItem.IsChecked select checkedListItem.Item.Name).ToList();
+            }
+        }
+
     }
 }

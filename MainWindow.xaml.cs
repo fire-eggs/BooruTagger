@@ -295,11 +295,14 @@ namespace ImageTag
         {
             if (ImageList.SelectedItems.Count < 1 || ImageList.SelectedItems.Count > 1)
                 return;
-            var img = ImageList.SelectedItem as ImageFile;
+            ImageFile img = ImageList.SelectedItem as ImageFile;
+            if (img == null)
+                return;
 
             var dlg = new ManageTagDlg(img) {Owner = this};
             if (dlg.ShowDialog() == false)
                 return;
+            img.RemoveTags(dlg.Answer);
             BuildTags();
         }
 
