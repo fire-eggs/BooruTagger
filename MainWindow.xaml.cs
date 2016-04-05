@@ -172,6 +172,10 @@ namespace ImageTag
             ImageList.SelectedItems.Clear();
 
             var tags = TagList.SelectedItems;
+
+            // setting selectedIndex in BuildTags doesn't update SelectedItems ???
+            if (tags.Count == 0)
+                tags = e.AddedItems;
             foreach (string tag in tags)
             {
                 foreach (var imageFile in MainImageList)
