@@ -25,6 +25,7 @@ namespace ImageTag
                 bi.BeginInit();
                 bi.DecodePixelWidth = 200;
                 bi.CacheOption = BitmapCacheOption.OnLoad; // Don't lock the file
+                bi.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
                 bi.UriSource = new Uri(value as string, UriKind.Absolute);
                 bi.EndInit();
                 return bi;
@@ -38,7 +39,7 @@ namespace ImageTag
                     var bi = new BitmapImage();
                     bi.BeginInit();
                     bi.DecodePixelWidth = 200;
-                    bi.CreateOptions = BitmapCreateOptions.IgnoreColorProfile;
+                    bi.CreateOptions = BitmapCreateOptions.IgnoreColorProfile | BitmapCreateOptions.IgnoreImageCache;
                     bi.CacheOption = BitmapCacheOption.OnLoad; // Don't lock the file
                     bi.UriSource = new Uri(value as string);
                     bi.EndInit();
