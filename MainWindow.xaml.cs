@@ -210,11 +210,18 @@ namespace ImageTag
             if (dlg.ShowDialog() == false)
                 return;
 
+            List<ImageFile> fails = new List<ImageFile>();
             foreach (var image in ImageList.SelectedItems)
             {
                 ImageFile img = image as ImageFile;
                 if (img != null)
-                    img.AddTag(dlg.Answer);
+                    if (!img.AddTag(dlg.Answer))
+                        fails.Add(img);
+            }
+
+            foreach (var imageFile in fails)
+            {
+                MainImageList.Remove(imageFile);
             }
 
             BuildTags();

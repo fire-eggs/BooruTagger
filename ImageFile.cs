@@ -125,12 +125,12 @@ namespace ImageTag
         }
 
         // Add tag 'A' to a file if it doesn't already exist.
-        public void AddTag(string tag)
+        public bool AddTag(string tag)
         {
             if (_tagList.Contains(tag))
-                return;
+                return true;
             _tagList.Add(tag);
-            RenameFile();
+            return RenameFile();
         }
 
         // Replace tag 'A' with 'B'. Do nothing if the file doesn't have tag 'A'.
@@ -148,7 +148,8 @@ namespace ImageTag
             RenameFile();
         }
 
-        private void RenameFile()
+        // Returns true/false: file successfully renamed
+        private bool RenameFile()
         {
             string filename = _baseFile;
             foreach (var aTag in _tagList)
@@ -170,13 +171,18 @@ namespace ImageTag
             {
                 File.Move(_previewURL, dest);
             }
-            catch
+            catch (FileNotFoundException)
             {
                 // Image probably removed by another program
-                // TODO remove from files/tags
+                return false;
+            }
+            catch
+            {
+                
             }
             _previewURL = dest;
             MakeTooltip();
+            return true;
         }
 
     }
