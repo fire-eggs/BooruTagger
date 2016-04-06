@@ -76,12 +76,15 @@ namespace ImageTag
         {
             StringBuilder sb = new StringBuilder(); 
             sb.Append(_baseFile);
-            sb.AppendLine();
-            foreach (var aTag in _tagList)
+            if (_tagList.Count > 0)
             {
-                sb.Append(" " + aTag);
+                sb.AppendLine();
+                foreach (var aTag in _tagList)
+                {
+                    sb.Append(aTag + " ");
+                }
             }
-            Dimensions = sb.ToString();
+            Dimensions = sb.ToString().Trim();
         }
 
         private static char[] tagSplit = { '+' };
