@@ -33,6 +33,7 @@ namespace ImageTag
             DataContext = this;
 
             InitializeComponent();
+            UpdateButtonState();
         }
 
         private string _lastPath;
@@ -137,12 +138,29 @@ namespace ImageTag
 
             TagList.SelectionChanged += TagList_OnSelectionChanged;
             TagList.SelectedIndex = 0;
+
+            UpdateButtonState();
+        }
+
+        // There is probably a clever way to do this...
+        private void UpdateButtonState()
+        {
+            int selCount = ImageList.SelectedItems.Count;
+            AddTagButton.IsEnabled = selCount > 0;
+            DelTagButton.IsEnabled = selCount > 0;
+            MngTagButton.IsEnabled = selCount == 1;
+
+            selCount = TagList.SelectedItems.Count;
+            if (selCount == 1 && (string)TagList.SelectedItems[0] == RESET_FILTER) // take 'show all' into account
+                selCount = 0;
+            KillTagButton.IsEnabled = selCount > 0;
+            ChgTagButton.IsEnabled = selCount == 1;
         }
 
         // Show which tags apply when one or more images are selected in the image list.
         private void ImageList_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            // Don't want selection events from the taglist: we're setting the selection
+            // Don't want selection events from the taglist: we're _setting_ the selection
             TagList.SelectionChanged -= TagList_OnSelectionChanged;
 
             try
@@ -164,6 +182,7 @@ namespace ImageTag
                 // Make sure to restore taglist selection handling
                 TagList.SelectionChanged += TagList_OnSelectionChanged;
             }
+            UpdateButtonState();
         }
 
         // Filters the image list to show only the images with the selected tag(s)
@@ -184,12 +203,11 @@ namespace ImageTag
                     imageFile.IsVisible = imageFile.HasTag(tag) || tag == RESET_FILTER;
                 }
             }
+            UpdateButtonState();
         }
 
         private void AddTagButton_OnClick(object sender, RoutedEventArgs e)
         {
-            // TODO: disable if no images selected
-
             if (ImageList.SelectedItems.Count < 1)
                 return;
 
@@ -229,8 +247,6 @@ namespace ImageTag
 
         private void KillTagButton_OnClick(object sender, RoutedEventArgs e)
         {
-            // TODO: disable if no tags selected
-
             // Don't include the "show all" tag
             List<string> tagsCanKill = new List<string>();
             foreach (string selectedItem in TagList.SelectedItems)
@@ -260,7 +276,8 @@ namespace ImageTag
 
         private void DelTagButton_OnClick(object sender, RoutedEventArgs e)
         {
-            // TODO: disable if no images selected
+            if (ImageList.SelectedItems.Count < 1)
+                return;
 
             // 1. build a list of tags on selected images
             List<ImageFile> selImages = new List<ImageFile>();
@@ -286,8 +303,6 @@ namespace ImageTag
 
         private void ChgTagButton_OnClickTagButton_OnClick(object sender, RoutedEventArgs e)
         {
-            // TODO disable if no, or more than one, tag selected
-
             if (TagList.SelectedItems.Count < 1 || TagList.SelectedItems.Count > 1)
                 return;
 

@@ -21,6 +21,7 @@
                     <Style TargetType="{x:Type Button}">
                         <Setter Property="Margin" Value="10,2,0,2"/>
                         <Setter Property="Padding" Value="2,0,2,0"/>
+                        <Setter Property="ToolTipService.ShowOnDisabled" Value="True"/>
                     </Style>
                 </StackPanel.Resources>
                 <Button Name="FolderButton" 
