@@ -33,7 +33,21 @@ namespace ImageTag
             DataContext = this;
 
             InitializeComponent();
+            LoadSettings();
             UpdateButtonState();
+            Closing += MainWindow_Closing;
+        }
+
+        void MainWindow_Closing(object sender, CancelEventArgs e)
+        {
+            var bounds = RestoreBounds; // not minimized size
+            mysettings.WinTop = (int)bounds.Top;
+            mysettings.WinLeft = (int)bounds.Left;
+            mysettings.WinHigh = (int)bounds.Height;
+            mysettings.WinWide = (int)bounds.Width;
+            mysettings.Fake = false;
+            mysettings.LastPath = _lastPath;
+            mysettings.Save();
         }
 
         private string _lastPath;
@@ -383,5 +397,37 @@ namespace ImageTag
         // http://elegantcode.com/2009/07/03/wpf-multithreading-using-the-backgroundworker-and-reporting-the-progress-to-the-ui/
         // http://pooyakhamooshi.blogspot.com/2010/07/accessing-ui-elements-using-dispatcher.html
 
+        private ITSettings mysettings;
+
+        private void LoadSettings()
+        {
+            mysettings = ITSettings.Load();
+
+            // No existing settings. Use default.
+            if (mysettings.Fake)
+            {
+                WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            }
+            else
+            {
+                // restore windows position
+                WindowStartupLocation = WindowStartupLocation.Manual;
+                Top = mysettings.WinTop;
+                Left = mysettings.WinLeft;
+                Height = mysettings.WinHigh;
+                Width = mysettings.WinWide;
+                _lastPath = mysettings.LastPath;
+            }
+        }
+
+        public class ITSettings : AppSettings<ITSettings>
+        {
+            public bool Fake = true;
+            public int WinLeft = -1;
+            public int WinTop = -1;
+            public int WinHigh = -1;
+            public int WinWide = -1;
+            public string LastPath = null;
+        }
     }
 }
