@@ -88,6 +88,7 @@
     <Compile Include="DelTagDlg.xaml.cs">
       <DependentUpon>DelTagDlg.xaml</DependentUpon>
     </Compile>
+    <Compile Include="FolderBrowserLauncher.cs" />
     <Compile Include="ImageConverter.cs" />
     <Compile Include="ImageFile.cs" />
     <Compile Include="MainWindow.xaml.cs">

@@ -13,7 +13,6 @@ using MessageBox = System.Windows.MessageBox;
 
 // TODO a splitter so the tag list can be wider would be good
 // TODO add an image viewer on double-click: can't see details in thumbs
-// TODO add and edit tag might attempt to add illegal file characters
 
 namespace ImageTag
 {
@@ -99,7 +98,8 @@ namespace ImageTag
             var dlg = new FolderBrowserDialog();
             if (_lastPath != null)
                 dlg.SelectedPath = _lastPath;
-            if (dlg.ShowDialog(GetIWin32Window(this)) != System.Windows.Forms.DialogResult.OK)
+            if (FolderBrowserLauncher.ShowFolderBrowser(dlg, GetIWin32Window(this)) != System.Windows.Forms.DialogResult.OK)
+//            if (dlg.ShowDialog(GetIWin32Window(this)) != System.Windows.Forms.DialogResult.OK)
                 return;
             _lastPath = dlg.SelectedPath;
 
