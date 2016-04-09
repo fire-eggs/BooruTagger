@@ -46,6 +46,7 @@ namespace ImageTag
             mysettings.WinWide = (int)bounds.Width;
             mysettings.Fake = false;
             mysettings.LastPath = _lastPath;
+            mysettings.SplitLoc = MyColumnWidthSetting.Value;
             mysettings.Save();
         }
 
@@ -407,6 +408,7 @@ namespace ImageTag
             if (mysettings.Fake)
             {
                 WindowStartupLocation = WindowStartupLocation.CenterScreen;
+                MyColumnWidthSetting = new GridLength(150.0, GridUnitType.Pixel);
             }
             else
             {
@@ -417,7 +419,9 @@ namespace ImageTag
                 Height = mysettings.WinHigh;
                 Width = mysettings.WinWide;
                 _lastPath = mysettings.LastPath;
+                MyColumnWidthSetting = new GridLength(mysettings.SplitLoc, GridUnitType.Pixel);
             }
+            InnerGrid.ColumnDefinitions[0].Width = MyColumnWidthSetting; // TODO the binding *should* have worked but doesn't ...
         }
 
         public class ITSettings : AppSettings<ITSettings>
@@ -428,6 +432,9 @@ namespace ImageTag
             public int WinHigh = -1;
             public int WinWide = -1;
             public string LastPath = null;
+            public double SplitLoc = 150.0;
         }
+
+        public GridLength MyColumnWidthSetting { get; set; }
     }
 }

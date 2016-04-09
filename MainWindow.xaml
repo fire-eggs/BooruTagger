@@ -43,11 +43,20 @@
                         ToolTip="View all tag(s) for the selected image">Manage Tags...</Button>
             </StackPanel>
 
-            <Grid Grid.Row="1">
+            <Grid Name="InnerGrid" Grid.Row="1">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="150"></ColumnDefinition>
+                    <ColumnDefinition Width="{Binding MyColumnWidthSetting, Mode=TwoWay}"></ColumnDefinition>
+                    <ColumnDefinition Width="Auto"></ColumnDefinition>
                     <ColumnDefinition Width="*"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
+                
+                <GridSplitter Grid.Column="1" 
+                              ResizeDirection="Columns" 
+                              HorizontalAlignment="Stretch" 
+                              VerticalAlignment="Stretch" 
+                              Width="5">
+                    
+                </GridSplitter>
                 
                 <ListBox Name="TagList" Grid.Column="0"
                          SelectionMode="Extended"
@@ -66,7 +75,7 @@
 
                 </ListBox>
                 
-                <ListBox Name="ImageList" Grid.Column="1"
+                <ListBox Name="ImageList" Grid.Column="2"
                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                          SelectionMode="Extended"
                          SelectionChanged="ImageList_OnSelectionChanged"
