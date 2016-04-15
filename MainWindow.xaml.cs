@@ -11,7 +11,6 @@ using System.Windows.Forms;
 using System.Windows.Threading;
 using MessageBox = System.Windows.MessageBox;
 
-// TODO a splitter so the tag list can be wider would be good
 // TODO add an image viewer on double-click: can't see details in thumbs
 
 namespace ImageTag
@@ -105,8 +104,10 @@ namespace ImageTag
             _lastPath = dlg.SelectedPath;
 
             // TODO Something stupid is happening, not releasing references?
+            TagList.ItemsSource = null;
             ImageList.ItemsSource = null;
             MainImageList.Clear();
+            MainTagList.Clear();
             GC.Collect();
             ImageList.ItemsSource = MainImageList;
 
@@ -143,7 +144,7 @@ namespace ImageTag
             TagList.SelectionChanged -= TagList_OnSelectionChanged;
 
             MainTagList.Clear();
-            var tags = MergedTagList(new List<ImageFile>(MainImageList));
+            var tags = MergedTagList(MainImageList);
 
             MainTagList.Add(RESET_FILTER); // make sure this is first
             foreach (var aTag in tags)
@@ -348,6 +349,10 @@ namespace ImageTag
             if (img == null)
                 return;
 
+            if (img.Tags().Count < 1)
+                return;
+
+            // TODO ManageTagDlg needs to be extended to be able to add or edit tags
             var dlg = new ManageTagDlg(img) {Owner = this};
             if (dlg.ShowDialog() == false)
                 return;
@@ -370,10 +375,21 @@ namespace ImageTag
                 _imageFetcher.RunWorkerAsync();
         }
 
+        private void doit()
+        {
+            BuildTags();
+            TagList.ItemsSource = null;
+            TagList.ItemsSource = MainTagList;
+            ImageList.ScrollIntoView(MainImageList[0]); // I think this fixes issue #14
+        }
+
         private void ImageLoadDone(object sender, RunWorkerCompletedEventArgs e)
         {
             _imagesToFetch.Clear();
-            BuildTags();
+            // Issue #23: by adding a delay, and doing the final update tasks in the background, I hope to fix the 'incomplete taglist' problem.
+            // The cause appears to be due to the images not all being in the MainImageList at the time this method was invoked.
+            Thread.Sleep(500);
+            Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(doit));
         }
 
         private delegate void UpdateDelegate(ImageFile anImg);
