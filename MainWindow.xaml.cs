@@ -38,18 +38,27 @@ namespace ImageTag
 
         void MainWindow_Closing(object sender, CancelEventArgs e)
         {
-            var bounds = RestoreBounds; // not minimized size
-            mysettings.WinTop = (int)bounds.Top;
-            mysettings.WinLeft = (int)bounds.Left;
-            mysettings.WinHigh = (int)bounds.Height;
-            mysettings.WinWide = (int)bounds.Width;
-            mysettings.Fake = false;
-            mysettings.LastPath = _lastPath;
-            mysettings.SplitLoc = MyColumnWidthSetting.Value;
-            mysettings.Save();
+            SaveSettings();
         }
 
-        private string _lastPath;
+        private List<string> PathHistory = new List<string>();
+
+        private string LastPath
+        {
+            get
+            {
+                if (PathHistory == null || PathHistory.Count < 1)
+                    return null;
+                return PathHistory[0]; // First entry is the most recent
+            }
+            set
+            {
+                // Make sure to wipe any older instance
+                PathHistory.Remove(value);
+                PathHistory.Insert(0, value); // First entry is the most recent
+            }
+        }
+
         public static IWin32Window GetIWin32Window(System.Windows.Media.Visual visual)
         {
             var source = PresentationSource.FromVisual(visual) as System.Windows.Interop.HwndSource;
@@ -96,12 +105,12 @@ namespace ImageTag
         {
             // 1. allow user to browse to a folder
             var dlg = new FolderBrowserDialog();
-            if (_lastPath != null)
-                dlg.SelectedPath = _lastPath;
+            if (LastPath != null)
+                dlg.SelectedPath = LastPath;
             if (FolderBrowserLauncher.ShowFolderBrowser(dlg, GetIWin32Window(this)) != System.Windows.Forms.DialogResult.OK)
 //            if (dlg.ShowDialog(GetIWin32Window(this)) != System.Windows.Forms.DialogResult.OK)
                 return;
-            _lastPath = dlg.SelectedPath;
+            LastPath = dlg.SelectedPath;
 
             // TODO Something stupid is happening, not releasing references?
             TagList.ItemsSource = null;
@@ -113,7 +122,7 @@ namespace ImageTag
 
             // 2. For each image in folder, add to MainImageList
             _imagesToFetch.Clear();
-            var allFiles = Directory.GetFiles(_lastPath);
+            var allFiles = Directory.GetFiles(LastPath);
             foreach (var aFile in allFiles)
             {
                 if (!IsImageFile(aFile))
@@ -327,6 +336,8 @@ namespace ImageTag
             if (oldTag == RESET_FILTER)
                 return;
 
+            // TODO must remove RESET_FILTER from passed in list
+
             // 1. Show dialog so user can edit tag
             // 2. For each image, change (old-tag) to (new-tag)
             var dlg = new ChgTagDlg(oldTag, MainTagList) { Owner = this };
@@ -356,6 +367,7 @@ namespace ImageTag
             var dlg = new ManageTagDlg(img) {Owner = this};
             if (dlg.ShowDialog() == false)
                 return;
+            // TODO when dialog can add/change tags, need to call something else here!
             img.RemoveTags(dlg.Answer);
             BuildTags();
         }
@@ -414,6 +426,8 @@ namespace ImageTag
         // http://elegantcode.com/2009/07/03/wpf-multithreading-using-the-backgroundworker-and-reporting-the-progress-to-the-ui/
         // http://pooyakhamooshi.blogspot.com/2010/07/accessing-ui-elements-using-dispatcher.html
 
+        // TODO push settings into separate class?
+
         private ITSettings mysettings;
 
         private void LoadSettings()
@@ -434,10 +448,23 @@ namespace ImageTag
                 Left = mysettings.WinLeft;
                 Height = mysettings.WinHigh;
                 Width = mysettings.WinWide;
-                _lastPath = mysettings.LastPath;
+                LastPath = mysettings.LastPath;
                 MyColumnWidthSetting = new GridLength(mysettings.SplitLoc, GridUnitType.Pixel);
             }
             InnerGrid.ColumnDefinitions[0].Width = MyColumnWidthSetting; // TODO the binding *should* have worked but doesn't ...
+        }
+
+        private void SaveSettings()
+        {
+            var bounds = RestoreBounds; // not minimized size
+            mysettings.WinTop = (int)bounds.Top;
+            mysettings.WinLeft = (int)bounds.Left;
+            mysettings.WinHigh = (int)bounds.Height;
+            mysettings.WinWide = (int)bounds.Width;
+            mysettings.Fake = false;
+            mysettings.LastPath = LastPath;
+            mysettings.SplitLoc = MyColumnWidthSetting.Value;
+            mysettings.Save();
         }
 
         public class ITSettings : AppSettings<ITSettings>
