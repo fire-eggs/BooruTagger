@@ -20,8 +20,6 @@ namespace ImageTag
     /// </summary>
     public partial class MainWindow
     {
-        private const string RESET_FILTER = "<show all>";
-
         public ObservableCollection<ImageFile> MainImageList { get; set; }
         public ObservableCollection<String> MainTagList { get; set; }
         public MainWindow()
@@ -155,14 +153,13 @@ namespace ImageTag
             MainTagList.Clear();
             var tags = MergedTagList(MainImageList);
 
-            MainTagList.Add(RESET_FILTER); // make sure this is first
             foreach (var aTag in tags)
             {
                 MainTagList.Add(aTag);
             }
 
             TagList.SelectionChanged += TagList_OnSelectionChanged;
-            TagList.SelectedIndex = 0;
+            //TagList.SelectedIndex = 0;
 
             UpdateButtonState();
         }
@@ -176,8 +173,6 @@ namespace ImageTag
             MngTagButton.IsEnabled = selCount == 1;
 
             selCount = TagList.SelectedItems.Count;
-            if (selCount == 1 && (string)TagList.SelectedItems[0] == RESET_FILTER) // take 'show all' into account
-                selCount = 0;
             KillTagButton.IsEnabled = selCount > 0;
             ChgTagButton.IsEnabled = selCount == 1;
         }
@@ -225,7 +220,7 @@ namespace ImageTag
                 foreach (var imageFile in MainImageList)
                 {
                     // "<show all>" being special
-                    imageFile.IsVisible = imageFile.HasTag(tag) || tag == RESET_FILTER;
+                    imageFile.IsVisible = imageFile.HasTag(tag);
                 }
             }
             UpdateButtonState();
@@ -236,20 +231,12 @@ namespace ImageTag
             if (ImageList.SelectedItems.Count < 1)
                 return;
 
-            // Don't include the "show all" tag
-            List<string> tagsCanAdd = new List<string>();
-            foreach (string tagName in MainTagList)
-            {
-                if (tagName != RESET_FILTER)
-                    tagsCanAdd.Add(tagName);
-            }
-
             // 1. build a list of all current tags
             // 2. show a dialog where the user can either:
             //  a. select from the current tags
             //  b. type in a new tag
             // 3. Add that tag to all selected images
-            AddTagDlg dlg = new AddTagDlg(tagsCanAdd) {Owner=this};
+            AddTagDlg dlg = new AddTagDlg(MainTagList) {Owner=this};
             if (dlg.ShowDialog() == false)
                 return;
 
@@ -276,8 +263,7 @@ namespace ImageTag
             List<string> tagsCanKill = new List<string>();
             foreach (string selectedItem in TagList.SelectedItems)
             {
-                if (selectedItem != RESET_FILTER)
-                    tagsCanKill.Add(selectedItem);
+                tagsCanKill.Add(selectedItem);
             }
             if (tagsCanKill.Count < 1)
                 return;
@@ -332,11 +318,6 @@ namespace ImageTag
                 return;
 
             var oldTag = TagList.SelectedItem as string;
-            // Don't allow if the "show all" tag selected
-            if (oldTag == RESET_FILTER)
-                return;
-
-            // TODO must remove RESET_FILTER from passed in list
 
             // 1. Show dialog so user can edit tag
             // 2. For each image, change (old-tag) to (new-tag)
@@ -479,5 +460,16 @@ namespace ImageTag
         }
 
         public GridLength MyColumnWidthSetting { get; set; }
+
+        private void ShowAll_Click(object sender, RoutedEventArgs e)
+        {
+            TagList.SelectedItems.Clear();
+            ImageList.SelectedItems.Clear();
+            foreach (var imageFile in MainImageList)
+            {
+                imageFile.IsVisible = true;
+            }
+            UpdateButtonState();
+        }
     }
 }

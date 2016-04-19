@@ -11,11 +11,13 @@
                 <imageTag:ImageConverter x:Key="imageConverter"/>
             </Grid.Resources>
             
+            <!-- Grid for buttons and inner grid -->
             <Grid.RowDefinitions>
                 <RowDefinition Height="25"></RowDefinition>
                 <RowDefinition Height="*"></RowDefinition>
             </Grid.RowDefinitions>
             
+            <!-- Action buttons -->
             <StackPanel Orientation="Horizontal" Grid.Row="0">
                 <StackPanel.Resources>
                     <Style TargetType="{x:Type Button}">
@@ -57,23 +59,26 @@
                               Width="5">
                     
                 </GridSplitter>
-                
-                <ListBox Name="TagList" Grid.Column="0"
+
+                <StackPanel Orientation="Vertical" Grid.Column="0">
+                    <Button Content="Show All" Click="ShowAll_Click"/>
+                    <ListBox Name="TagList" 
                          SelectionMode="Extended"
                          ItemsSource="{Binding MainTagList}"
                          SelectionChanged="TagList_OnSelectionChanged"
                     >
-                    <ListBox.ItemContainerStyle>
-                        <Style TargetType="{x:Type ListBoxItem}">
-                            <Style.Resources>
-                                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="LightGreen" />
-                                <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="LightGreen" />
-                                <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="Red"/>
-                            </Style.Resources>
-                        </Style>
-                    </ListBox.ItemContainerStyle>
+                        <ListBox.ItemContainerStyle>
+                            <Style TargetType="{x:Type ListBoxItem}">
+                                <Style.Resources>
+                                    <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="LightGreen" />
+                                    <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="LightGreen" />
+                                    <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="Red"/>
+                                </Style.Resources>
+                            </Style>
+                        </ListBox.ItemContainerStyle>
 
-                </ListBox>
+                    </ListBox>
+                </StackPanel>
                 
                 <ListBox Name="ImageList" Grid.Column="2"
                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
