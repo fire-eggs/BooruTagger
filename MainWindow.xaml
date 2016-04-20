@@ -26,8 +26,10 @@
                         <Setter Property="ToolTipService.ShowOnDisabled" Value="True"/>
                     </Style>
                 </StackPanel.Resources>
-                <Button Name="FolderButton" 
-                    Click="FolderButton_OnClick">Browse...</Button>
+                <Button Name="FolderButton"
+                        Content="Browse..."
+                        ToolTip="Select a folder containing images"
+                        Click="FolderButton_OnClick"/>
                 <Button Name="AddTagButton"
                         Click="AddTagButton_OnClick"
                         ToolTip="Add a tag to all selected images">Add Tag...</Button>
@@ -45,7 +47,7 @@
                         ToolTip="View all tag(s) for the selected image">Manage Tags...</Button>
             </StackPanel>
 
-            <Grid Name="InnerGrid" Grid.Row="1">
+            <Grid Name="InnerGrid" Grid.Row="1" Margin="4">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="{Binding MyColumnWidthSetting, Mode=TwoWay}"></ColumnDefinition>
                     <ColumnDefinition Width="Auto"></ColumnDefinition>
@@ -60,8 +62,10 @@
                     
                 </GridSplitter>
 
-                <StackPanel Orientation="Vertical" Grid.Column="0">
-                    <Button Content="Show All" Click="ShowAll_Click"/>
+                <StackPanel Orientation="Vertical" Grid.Column="0" Margin="2">
+                    <Button Content="Show All" 
+                            ToolTip="Clears selected tags to see all images again"
+                            Click="ShowAll_Click" Margin="4"/>
                     <ListBox Name="TagList" 
                          SelectionMode="Extended"
                          ItemsSource="{Binding MainTagList}"
