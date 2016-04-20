@@ -11,6 +11,8 @@ using System.Windows.Forms;
 using System.Windows.Threading;
 using MessageBox = System.Windows.MessageBox;
 
+// ReSharper disable once InconsistentNaming
+
 // TODO add an image viewer on double-click: can't see details in thumbs
 
 namespace ImageTag
@@ -39,7 +41,7 @@ namespace ImageTag
             SaveSettings();
         }
 
-        private List<string> PathHistory = new List<string>();
+        private readonly List<string> PathHistory = new List<string>();
 
         private string LastPath
         {
