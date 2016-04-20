@@ -4,8 +4,14 @@
         Title="ManageTagDlg" 
         SizeToContent="WidthAndHeight"
         WindowStartupLocation="CenterOwner"
+        xmlns:cmds="clr-namespace:ImageTag"
         >
     
+    <Window.CommandBindings>
+        <CommandBinding Command="cmds:MyAppCmds.EditBtn_Click"
+                        Executed="EditBtn">
+        </CommandBinding>
+    </Window.CommandBindings>
     <Grid Margin="15">
         <StackPanel Orientation="Vertical">
             <StackPanel Orientation="Horizontal">
@@ -16,14 +22,20 @@
             <ListBox ItemsSource="{Binding TagSet}" >
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <CheckBox IsChecked="{Binding IsChecked}" >
-                            <TextBlock Text="{Binding Path=Item.Name}" />
-                        </CheckBox>
+                        <StackPanel Orientation="Horizontal">
+                            <CheckBox IsChecked="{Binding IsChecked}" >
+                                <TextBlock Text="{Binding Path=Item.Name}" />
+                            </CheckBox>
+                            <Button Margin="2,0,2,0" Content="Edit" Command="cmds:MyAppCmds.EditBtn_Click" CommandParameter="{Binding Path=Item.Name}"/>
+                        </StackPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
 
-            <StackPanel Orientation="Horizontal">
+            <Button Margin="2" Content="Add Tag" Click="AddTag_OnClick"></Button>
+            
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Center">
                 <Button Name="btnDlgOK" 
                         Content="_Ok"
                         Click="BtnDlgOK_OnClick" 

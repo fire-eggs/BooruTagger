@@ -346,8 +346,7 @@ namespace ImageTag
             if (img.Tags().Count < 1)
                 return;
 
-            // TODO ManageTagDlg needs to be extended to be able to add or edit tags
-            var dlg = new ManageTagDlg(img) {Owner = this};
+            var dlg = new ManageTagDlg(img, MainTagList) { Owner = this };
             if (dlg.ShowDialog() == false)
                 return;
             // TODO when dialog can add/change tags, need to call something else here!

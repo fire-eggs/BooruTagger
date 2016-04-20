@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Windows;
+using System.Windows.Input;
 
 namespace ImageTag
 {
@@ -24,19 +26,23 @@ namespace ImageTag
         }
 
         private string _imageName;
+        private IList<string> _alltags;
 
-        public ManageTagDlg(ImageFile img)
+        public ManageTagDlg(ImageFile img, IList<string> alltags)
         {
             InitializeComponent();
 
             TagSet = new ObservableCollection<CheckedListItem<ATag>>();
-            foreach (string tag in img.Tags())
+            var tags = img.Tags();
+            tags.Sort();
+            foreach (string tag in tags)
             {
                 TagSet.Add(new CheckedListItem<ATag>(new ATag(tag), isChecked:true));
             }
             ImageName = img.BaseName;
 
             DataContext = this;
+            _alltags = alltags;
         }
 
         public string ImageName
@@ -75,5 +81,26 @@ namespace ImageTag
             }
         }
 
+        private void EditBtn(object sender, ExecutedRoutedEventArgs e)
+        {
+            string tag = (string)e.Parameter;
+
+            var dlg = new ChgTagDlg(tag, _alltags) { Owner = this };
+            if (dlg.ShowDialog() == false)
+                return;
+
+        }
+
+        private void AddTag_OnClick(object sender, RoutedEventArgs e)
+        {
+            AddTagDlg dlg = new AddTagDlg(_alltags) { Owner = this };
+            if (dlg.ShowDialog() == false)
+                return;
+        }
+    }
+
+    public class MyAppCmds
+    {
+        public static RoutedUICommand EditBtn_Click = new RoutedUICommand("Desc", "EditBtn_Click", typeof(ManageTagDlg));
     }
 }
