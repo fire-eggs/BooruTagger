@@ -56,6 +56,7 @@ namespace ImageTag
                 // Make sure to wipe any older instance
                 PathHistory.Remove(value);
                 PathHistory.Insert(0, value); // First entry is the most recent
+                Title = "Image Tagger: " + value;
             }
         }
 
@@ -192,10 +193,13 @@ namespace ImageTag
                 TagList.SelectedItems.Clear();
                 foreach (ImageFile image in images)
                 {
-                    var tags = image.Tags();
-                    foreach (var tag in tags)
+                    if (image.IsVisible) // Issue #28: don't select tags from filtered out images
                     {
-                        TagList.SelectedItems.Add(tag);
+                        var tags = image.Tags();
+                        foreach (var tag in tags)
+                        {
+                            TagList.SelectedItems.Add(tag);
+                        }
                     }
                 }
             }
@@ -246,8 +250,8 @@ namespace ImageTag
             foreach (var image in ImageList.SelectedItems)
             {
                 ImageFile img = image as ImageFile;
-                if (img != null)
-                    if (!img.AddTag(dlg.Answer))
+                if (img != null && img.IsVisible) // Issue #28: multi-select can include images which are filtered out. Don't add the tag to filtered images.
+                    if (!img.AddTag(dlg.Answer)) // TODO this could fail because image has vanished, or because tag cannot be added?
                         fails.Add(img);
             }
 
