@@ -13,6 +13,7 @@
                 <ComboBox Name="taglist" 
                           IsEditable="True" 
                           SelectionChanged="Taglist_OnSelectionChanged" 
+                          PreviewTextInput="Taglist_OnPreviewTextInput"
                           MinWidth="150"
                           />
             </StackPanel>

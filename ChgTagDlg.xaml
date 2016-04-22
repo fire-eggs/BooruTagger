@@ -14,7 +14,8 @@
                 <Label>Select or Enter Tag to use:</Label>
                 <ComboBox Name="taglist" 
                           IsEditable="True" 
-                          SelectionChanged="Taglist_OnSelectionChanged" 
+                          SelectionChanged="Taglist_OnSelectionChanged"
+                          PreviewTextInput="Taglist_OnPreviewTextInput"
                           MinWidth="150"
                           />
             </StackPanel>
