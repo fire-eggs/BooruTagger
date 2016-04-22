@@ -1,29 +1,10 @@
 ﻿using System.IO;
 using System.Web.Script.Serialization;
 
+// TODO consider outputting in human-readable format. See http://www.limilabs.com/blog/json-net-formatter
+
 namespace ImageTag
 {
-    //class Program
-    //{
-    //    static void Main(string[] args)
-    //    {
-    //        MySettings settings = MySettings.Load();
-    //        Console.WriteLine("Current value of 'myInteger': " + settings.myInteger);
-    //        Console.WriteLine("Incrementing 'myInteger'...");
-    //        settings.myInteger++;
-    //        Console.WriteLine("Saving settings...");
-    //        settings.Save();
-    //        Console.WriteLine("Done.");
-    //        Console.ReadKey();
-    //    }
-
-    //    class MySettings : AppSettings<MySettings>
-    //    {
-    //        public string myString = "Hello World";
-    //        public int myInteger = 1;
-    //    }
-    //}
-
     public class AppSettings<T> where T : new()
     {
         private const string DEFAULT_FILENAME = "ImageTag_settings.jsn";

@@ -7,6 +7,8 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
 
+// Converter for image thumbnails. Used by the main image listbox.
+// Loads
 namespace ImageTag
 {
     public class ImageConverter : IValueConverter
@@ -40,6 +42,7 @@ namespace ImageTag
             return 1;
         }
 
+        // Given the bytes of a bitmap file, generate a thumbnail of the requested size.
         private static Bitmap BytesToThumbnailBitmap(byte[] bitmapBytes, int w, int h)
         {
             var newBitmap = new Bitmap(w, h);
@@ -53,16 +56,17 @@ namespace ImageTag
 
                     double scale = CalculateScale(bitmap.Size.Width, bitmap.Size.Height, newBitmap.Size.Width, newBitmap.Size.Height, RatioType.FitImage);
                     var size = new System.Drawing.Size((int)(bitmap.Size.Width * scale), (int)(bitmap.Size.Height * scale));
-                    g.DrawImage(bitmap, new System.Drawing.Rectangle((w - size.Width) / 2, (h - size.Height) / 2, size.Width, size.Height));
+                    g.DrawImage(bitmap, new Rectangle((w - size.Width) / 2, (h - size.Height) / 2, size.Width, size.Height));
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.ToString());
+                    Console.WriteLine(ex.ToString()); // TODO this should go in the log
                 }
             }
             return newBitmap;
         }
 
+        // Take a Bitmap and turn it into a BitmapImage, as needed by WPF.
         public static BitmapImage ToBitmapImage(Bitmap bitmap)
         {
             using (var memory = new MemoryStream())
@@ -99,43 +103,8 @@ namespace ImageTag
             }
             catch (Exception)
             {
-                return DependencyProperty.UnsetValue;
+                return DependencyProperty.UnsetValue; // TODO should this be logged?
             }
-
-            /*
-            try
-            {
-                var bi = new BitmapImage();
-                bi.BeginInit();
-                bi.DecodePixelWidth = 200;
-                bi.DecodePixelHeight = 200;
-                bi.CacheOption = BitmapCacheOption.OnLoad; // Don't lock the file
-                bi.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
-                bi.UriSource = new Uri(value as string, UriKind.Absolute);
-                bi.EndInit();
-                return bi;
-            }
-            catch
-            {
-                try
-                {
-                    // Try to deal with some corrupt images
-                    // See: http://www.hanselman.com/blog/DealingWithImagesWithBadMetadataCorruptedColorProfilesInWPF.aspx
-                    var bi = new BitmapImage();
-                    bi.BeginInit();
-                    bi.DecodePixelWidth = 200;
-                    bi.CreateOptions = BitmapCreateOptions.IgnoreColorProfile | BitmapCreateOptions.IgnoreImageCache;
-                    bi.CacheOption = BitmapCacheOption.OnLoad; // Don't lock the file
-                    bi.UriSource = new Uri(value as string);
-                    bi.EndInit();
-                    return bi;
-                }
-                catch
-                {
-                    return DependencyProperty.UnsetValue;
-                }
-            }
-            */
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
