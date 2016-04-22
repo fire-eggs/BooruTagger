@@ -62,14 +62,21 @@
                     
                 </GridSplitter>
 
-                <StackPanel Orientation="Vertical" Grid.Column="0" Margin="2">
+                <Grid Grid.Column="0" Margin="2">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    
                     <Button Content="Show All" 
+                            Grid.Row="0"
                             ToolTip="Clears selected tags to see all images again"
                             Click="ShowAll_Click" Margin="4"/>
                     <ListBox Name="TagList" 
-                         SelectionMode="Extended"
-                         ItemsSource="{Binding MainTagList}"
-                         SelectionChanged="TagList_OnSelectionChanged"
+                             Grid.Row="1"
+                             SelectionMode="Extended"
+                             ItemsSource="{Binding MainTagList}"
+                             SelectionChanged="TagList_OnSelectionChanged"
                     >
                         <ListBox.ItemContainerStyle>
                             <Style TargetType="{x:Type ListBoxItem}">
@@ -82,7 +89,7 @@
                         </ListBox.ItemContainerStyle>
 
                     </ListBox>
-                </StackPanel>
+                </Grid>
                 
                 <ListBox Name="ImageList" Grid.Column="2"
                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
