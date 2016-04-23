@@ -68,6 +68,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="ExplorerTreeView\ExplorerDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -88,6 +92,12 @@
     <Compile Include="DelTagDlg.xaml.cs">
       <DependentUpon>DelTagDlg.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ExplorerTreeView\ExplorerDlg.xaml.cs">
+      <DependentUpon>ExplorerDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ExplorerTreeView\ExplorerErrorEventArgs.cs" />
+    <Compile Include="ExplorerTreeView\ExplorerTreeView.cs" />
+    <Compile Include="ExplorerTreeView\FileSystemNodeImageConverter.cs" />
     <Compile Include="FolderBrowserLauncher.cs" />
     <Compile Include="ImageConverter.cs" />
     <Compile Include="ImageFile.cs" />
@@ -129,6 +139,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="ExplorerTreeView\diskdrive.png" />
+    <Resource Include="ExplorerTreeView\folder.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

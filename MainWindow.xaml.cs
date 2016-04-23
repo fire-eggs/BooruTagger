@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Threading;
+using ImageTag.ExplorerTreeView;
 using MessageBox = System.Windows.MessageBox;
 
 // ReSharper disable once InconsistentNaming
@@ -41,7 +42,7 @@ namespace ImageTag
             SaveSettings();
         }
 
-        private readonly List<string> PathHistory = new List<string>();
+        private List<string> PathHistory = new List<string>();
 
         private string LastPath
         {
@@ -104,6 +105,24 @@ namespace ImageTag
 
         private void FolderButton_OnClick(object sender, RoutedEventArgs e)
         {
+            // TODO testing non-existing path
+            // testing
+            //var tmp = LastPath;
+            //LastPath = @"R:\pix\A\sorted\catears";
+            //LastPath = @"R:\pix\A\sorted\catears\iqdbNone1";
+            //LastPath = @"R:\downloads\pix\Anime";
+            //LastPath = tmp;
+
+            var dlgN = new ExplorerDlg();
+            dlgN.SelectedPath = LastPath;
+            dlgN.HintText = "Find a folder containing images";
+            dlgN.Owner = this;
+            dlgN.PathHistory = PathHistory;
+            if (dlgN.ShowDialog() == false)
+                return;
+            LastPath = dlgN.SelectedPath;
+
+#if false
             // 1. allow user to browse to a folder
             var dlg = new FolderBrowserDialog();
             if (LastPath != null)
@@ -112,6 +131,7 @@ namespace ImageTag
 //            if (dlg.ShowDialog(GetIWin32Window(this)) != System.Windows.Forms.DialogResult.OK)
                 return;
             LastPath = dlg.SelectedPath;
+#endif
 
             // TODO Something stupid is happening, not releasing references?
             TagList.ItemsSource = null;
@@ -434,8 +454,9 @@ namespace ImageTag
                 Left = mysettings.WinLeft;
                 Height = mysettings.WinHigh;
                 Width = mysettings.WinWide;
-                LastPath = mysettings.LastPath;
                 MyColumnWidthSetting = new GridLength(mysettings.SplitLoc, GridUnitType.Pixel);
+                PathHistory = mysettings.PathHistory ?? new List<string>();
+                LastPath = mysettings.LastPath;
             }
             InnerGrid.ColumnDefinitions[0].Width = MyColumnWidthSetting; // TODO the binding *should* have worked but doesn't ...
         }
@@ -450,6 +471,7 @@ namespace ImageTag
             mysettings.Fake = false;
             mysettings.LastPath = LastPath;
             mysettings.SplitLoc = MyColumnWidthSetting.Value;
+            mysettings.PathHistory = PathHistory;
             mysettings.Save();
         }
 
@@ -462,6 +484,7 @@ namespace ImageTag
             public int WinWide = -1;
             public string LastPath = null;
             public double SplitLoc = 150.0;
+            public List<string> PathHistory = null;
         }
 
         public GridLength MyColumnWidthSetting { get; set; }
