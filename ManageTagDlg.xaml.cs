@@ -88,14 +88,15 @@ namespace ImageTag
             var dlg = new ChgTagDlg(tag, _alltags) { Owner = this };
             if (dlg.ShowDialog() == false)
                 return;
-
+            // TODO actually change the tag!
         }
 
         private void AddTag_OnClick(object sender, RoutedEventArgs e)
         {
-            AddTagDlg dlg = new AddTagDlg(_alltags) { Owner = this };
+            var dlg = new ChgTagDlg(null, _alltags) { Owner = this };
             if (dlg.ShowDialog() == false)
                 return;
+            // TODO actually add the tag!
         }
     }
 

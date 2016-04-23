@@ -262,7 +262,7 @@ namespace ImageTag
             //  a. select from the current tags
             //  b. type in a new tag
             // 3. Add that tag to all selected images
-            AddTagDlg dlg = new AddTagDlg(MainTagList) {Owner=this};
+            var dlg = new ChgTagDlg(null, MainTagList) {Owner=this};
             if (dlg.ShowDialog() == false)
                 return;
 

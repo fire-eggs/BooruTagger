@@ -8,9 +8,11 @@ using System.Windows.Input;
 namespace ImageTag
 {
     /// <summary>
-    /// Interaction logic for ChgTagDlg.xaml
+    /// A dialog to allow the user to ADD or CHANGE a tag.
+    /// The user can type in a new tag or select from the
+    /// list of existing tags.
     /// </summary>
-    public partial class ChgTagDlg : Window
+    public partial class ChgTagDlg
     {
         private readonly char[] _illegalChars;
 
@@ -19,8 +21,19 @@ namespace ImageTag
             InitializeComponent();
             taglist.ItemsSource = tags;
             btnDlgOK.IsEnabled = true; // TODO find "on text changed" event for editable combo
-            OldTag.Text = string.Format("Changing tag '{0}'", oldTag);
-            taglist.SelectedItem = oldTag;
+
+            // Eliminate a separate 'add tag' dialog: an empty "old tag" 
+            // used to indicate this is an 'add' operation.
+            if (oldTag == null)
+            {
+                OldTag.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                OldTag.Visibility = Visibility.Visible;
+                OldTag.Text = string.Format("Changing tag '{0}'", oldTag);
+                taglist.SelectedItem = oldTag;
+            }
 
             _illegalChars = Path.GetInvalidFileNameChars();
         }
