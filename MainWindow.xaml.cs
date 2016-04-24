@@ -57,7 +57,6 @@ namespace ImageTag
                 // Make sure to wipe any older instance
                 PathHistory.Remove(value);
                 PathHistory.Insert(0, value); // First entry is the most recent
-                Title = "Image Tagger: " + value;
             }
         }
 
@@ -121,6 +120,7 @@ namespace ImageTag
             if (dlgN.ShowDialog() == false)
                 return;
             LastPath = dlgN.SelectedPath;
+            Title = "Image Tagger: " + LastPath;
 
 #if false
             // 1. allow user to browse to a folder
