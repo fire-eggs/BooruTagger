@@ -112,6 +112,11 @@ namespace ImageTag
             return _tagList;
         }
 
+        public void RemoveTag(string tag)
+        {
+            _tagList.Remove(tag);
+        }
+
         public void RemoveTags(IList tagsToRemove)
         {
             bool anyHits = false;
@@ -129,6 +134,7 @@ namespace ImageTag
         {
             if (_tagList.Contains(tag))
                 return true;
+            // TODO if RenameFile can fail, consider not adding the tag to the list unless success?
             _tagList.Add(tag);
             return RenameFile();
         }

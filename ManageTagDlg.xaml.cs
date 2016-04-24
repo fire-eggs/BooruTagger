@@ -27,18 +27,14 @@ namespace ImageTag
 
         private string _imageName;
         private IList<string> _alltags;
+        private ImageFile _activeImage;
 
         public ManageTagDlg(ImageFile img, IList<string> alltags)
         {
             InitializeComponent();
+            _activeImage = img;
 
-            TagSet = new ObservableCollection<CheckedListItem<ATag>>();
-            var tags = img.Tags();
-            tags.Sort();
-            foreach (string tag in tags)
-            {
-                TagSet.Add(new CheckedListItem<ATag>(new ATag(tag), isChecked:true));
-            }
+            BuildTagSet();
             ImageName = img.BaseName;
 
             DataContext = this;
@@ -51,7 +47,13 @@ namespace ImageTag
             set { _imageName = value; OnPropertyChanged(() => ImageName); }
         }
 
-        public ObservableCollection<CheckedListItem<ATag>> TagSet { get; set; }
+        private ObservableCollection<CheckedListItem<ATag>> _tags;
+
+        public ObservableCollection<CheckedListItem<ATag>> TagSet
+        {
+            get { return _tags; }
+            set { _tags = value; OnPropertyChanged(() => TagSet); }
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -88,7 +90,10 @@ namespace ImageTag
             var dlg = new ChgTagDlg(tag, _alltags) { Owner = this };
             if (dlg.ShowDialog() == false)
                 return;
-            // TODO actually change the tag!
+            _activeImage.ChangeTag(tag, dlg.Answer); // actually change the tag
+            BuildTagSet();
+
+            // TODO by changing the imageFile, user cannot cancel an Add/Change?
         }
 
         private void AddTag_OnClick(object sender, RoutedEventArgs e)
@@ -96,7 +101,33 @@ namespace ImageTag
             var dlg = new ChgTagDlg(null, _alltags) { Owner = this };
             if (dlg.ShowDialog() == false)
                 return;
-            // TODO actually add the tag!
+            _activeImage.AddTag(dlg.Answer); // actually add the tag
+            BuildTagSet();
+
+            // TODO by changing the imageFile, user cannot cancel an Add/Change?
+        }
+
+        private void BuildTagSet()
+        {
+            if (TagSet != null)
+                foreach (var checkedListItem in TagSet)
+                {
+                    if (!checkedListItem.IsChecked)
+                        _activeImage.RemoveTag(checkedListItem.Item.Name);
+                }
+
+            var tmpTags = new ObservableCollection<CheckedListItem<ATag>>();
+            var tags = _activeImage.Tags();
+            tags.Sort();
+            foreach (string tag in tags)
+            {
+                tmpTags.Add(new CheckedListItem<ATag>(new ATag(tag), isChecked: true));
+            }
+            TagSet = tmpTags;
+
+            // TODO why doesn't the listbox rebuild when TagSet is updated???
+            TagList.ItemsSource = null;
+            TagList.ItemsSource = TagSet;
         }
     }
 

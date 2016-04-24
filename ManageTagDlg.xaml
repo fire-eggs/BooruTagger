@@ -19,7 +19,7 @@
                 <TextBox Text="{Binding ImageName}" 
                          IsEnabled="False" />
             </StackPanel>
-            <ListBox ItemsSource="{Binding TagSet}" >
+            <ListBox x:Name="TagList" ItemsSource="{Binding TagSet}" >
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
