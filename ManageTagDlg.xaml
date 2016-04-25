@@ -5,6 +5,7 @@
         SizeToContent="WidthAndHeight"
         WindowStartupLocation="CenterOwner"
         xmlns:cmds="clr-namespace:ImageTag"
+        MaxHeight="750"
         >
     
     <Window.CommandBindings>
@@ -12,34 +13,48 @@
                         Executed="EditBtn">
         </CommandBinding>
     </Window.CommandBindings>
-    <Grid Margin="15">
-        <StackPanel Orientation="Vertical">
-            <StackPanel Orientation="Horizontal">
+    <Grid Margin="5">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            
+            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,3">
                 <Label Content="Image:" />
                 <TextBox Text="{Binding ImageName}" 
                          IsEnabled="False" />
             </StackPanel>
-            <ListBox x:Name="TagList" ItemsSource="{Binding TagSet}" >
+
+            <ListBox Grid.Row="1" x:Name="TagList" ItemsSource="{Binding TagSet}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
-                            <CheckBox IsChecked="{Binding IsChecked}" >
+                            <CheckBox IsChecked="{Binding IsChecked}"
+                                      Margin="2,2,2,0">
                                 <TextBlock Text="{Binding Path=Item.Name}" />
                             </CheckBox>
-                            <Button Margin="2,0,2,0" Content="Edit" Command="cmds:MyAppCmds.EditBtn_Click" CommandParameter="{Binding Path=Item.Name}"/>
+                            <Button Margin="2,0,2,0"
+                                    Content="Edit" 
+                                    Command="cmds:MyAppCmds.EditBtn_Click" 
+                                    CommandParameter="{Binding Path=Item.Name}"/>
                         </StackPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
 
-            <Button Margin="2" Content="Add Tag" Click="AddTag_OnClick"></Button>
-            
-            <StackPanel Orientation="Horizontal"
+            <Button Grid.Row="2" Margin="0,3,0,3" Content="Add Tag" Click="AddTag_OnClick"></Button>
+
+            <StackPanel Grid.Row="3" 
+                        Orientation="Horizontal"
                         HorizontalAlignment="Center">
                 <Button Name="btnDlgOK" 
                         Content="_Ok"
                         Click="BtnDlgOK_OnClick" 
                         MinWidth="60"
+                        Margin="0,0,5,0"
                         IsDefault="True" 
                         />
                 <Button IsCancel="True" 
@@ -48,6 +63,6 @@
                         />
             </StackPanel>
 
-        </StackPanel>
+        </Grid>
     </Grid>
 </Window>
