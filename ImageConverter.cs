@@ -60,7 +60,7 @@ namespace ImageTag
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.ToString()); // TODO this should go in the log
+                    Console.WriteLine(ex.ToString()); // TODO this should go in a log
                 }
             }
             return newBitmap;

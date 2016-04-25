@@ -7,6 +7,7 @@ using System.IO;
 
 // TODO tag/separator character as an option
 using System.Text;
+using System.Windows;
 
 namespace ImageTag
 {
@@ -134,9 +135,12 @@ namespace ImageTag
         {
             if (_tagList.Contains(tag))
                 return true;
-            // TODO if RenameFile can fail, consider not adding the tag to the list unless success?
-            _tagList.Add(tag);
-            return RenameFile();
+
+            // NOTE: relies on exception to raise other problems besides "image has vanished"
+            bool res = RenameFile();
+            if (res)
+                _tagList.Add(tag);
+            return res;
         }
 
         // Replace tag 'A' with 'B'. Do nothing if the file doesn't have tag 'A'.
@@ -171,20 +175,14 @@ namespace ImageTag
 
             string dest = Path.Combine(Path.GetDirectoryName(_previewURL),filename) + Path.GetExtension(_previewURL);
 
-            // TODO check if dest length > 256
-
             try
             {
                 File.Move(_previewURL, dest);
             }
-            catch (FileNotFoundException)
+            catch (FileNotFoundException) // NOTE: documentation suggests an IOException will occur
             {
                 // Image probably removed by another program
                 return false;
-            }
-            catch
-            {
-                
             }
             _previewURL = dest;
             MakeTooltip();

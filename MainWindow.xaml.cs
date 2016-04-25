@@ -270,9 +270,24 @@ namespace ImageTag
             foreach (var image in ImageList.SelectedItems)
             {
                 ImageFile img = image as ImageFile;
-                if (img != null && img.IsVisible) // Issue #28: multi-select can include images which are filtered out. Don't add the tag to filtered images.
-                    if (!img.AddTag(dlg.Answer)) // TODO this could fail because image has vanished, or because tag cannot be added?
+
+                // Issue #28: multi-select can include images which are filtered out. Don't add the tag to filtered images.
+                if (img == null || !img.IsVisible) 
+                    continue;
+                try
+                {
+                    // TODO is there another failure scenario besides "image has vanished"?
+                    if (!img.AddTag(dlg.Answer))
                         fails.Add(img);
+                }
+                catch (PathTooLongException)
+                {
+                    // TODO need to handle this in the ManageTags dialog as well
+                    string msg = string.Format(
+                        "Could not add tag '{0}' to image '{1}': resulting filename is too long.", dlg.Answer,
+                        img.BaseName);
+                    MessageBox.Show(this, msg);
+                }
             }
 
             foreach (var imageFile in fails)

@@ -2,8 +2,6 @@
 using System.Windows;
 using System.Windows.Controls;
 
-// TODO this might be better done with a checked-listbox so multiple tags can be deleted
-
 namespace ImageTag
 {
     /// <summary>
