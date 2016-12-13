@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 
 // Represents a single image
 
 // TODO tag/separator character as an option
-using System.Text;
-using System.Windows;
+// TODO on failure, tag list could be out of sync from reality?
 
 namespace ImageTag
 {
@@ -136,10 +135,12 @@ namespace ImageTag
             if (_tagList.Contains(tag))
                 return true;
 
+            _tagList.Add(tag);
+
             // NOTE: relies on exception to raise other problems besides "image has vanished"
             bool res = RenameFile();
-            if (res)
-                _tagList.Add(tag);
+            if (!res)
+                _tagList.Remove(tag);
             return res;
         }
 
